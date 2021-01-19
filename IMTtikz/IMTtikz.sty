@@ -1,0 +1,492 @@
+% IMTtikz package is made for typesetting maths and tikz in LaTeX
+%Copyright (C) 2020 - Isabella Basso do Amaral
+%
+%This program is free software: you can redistribute it and/or modify
+%it under the terms of the GNU General Public License as published by
+%the Free Software Foundation, either version 3 of the License, or
+%(at your option) any later version.
+%
+%This program is distributed in the hope that it will be useful,
+%but WITHOUT ANY WARRANTY; without even the implied warranty of
+%MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%GNU General Public License for more details.
+%
+%You should have received a copy of the GNU General Public License
+%along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{IMTtikz}[2020/07/30 Isabella's modified TikZ and maths definitions.]
+
+\RequirePackage{etoolbox}
+
+\newtoggle{eng}
+\DeclareOption{english}{\global\settoggle{eng}{true}}
+\newtoggle{ext}
+\DeclareOption{externalize}{\global\settoggle{ext}{true}}
+\newtoggle{brm}
+\DeclareOption{brmaths}{\global\settoggle{brm}{true}}
+\newtoggle{slv}
+\DeclareOption{slantvectors}{\global\settoggle{slv}{true}}
+\newtoggle{arr}
+\DeclareOption{arrows}{\global\settoggle{arr}{true}}
+\newtoggle{ct}
+\DeclareOption{ctikz}{\global\settoggle{ct}{true}}
+\newtoggle{xk}
+\DeclareOption{xkcd}{\global\settoggle{xk}{true}\global\settoggle{ext}{true}}
+\newtoggle{cen}
+\DeclareOption{enums}{\global\settoggle{cen}{true}}
+\newtoggle{ws}
+\DeclareOption{weirdsymbols}{\global\settoggle{ws}{true}}
+\newtoggle{py}
+\DeclareOption{python}{\global\settoggle{py}{true}}
+\newtoggle{mat}
+\DeclareOption{mathematica}{\global\settoggle{mat}{true}}
+\newtoggle{ci}
+\DeclareOption{cite}{\global\settoggle{ci}{true}}
+
+\DeclareOption*{\PackageWarning{IMTtikz}{Unknown ‘\CurrentOption’}}
+\ProcessOptions*\relax
+
+\RequirePackage{amsmath, amsfonts, amsthm, amssymb}
+\RequirePackage{mathtools, empheq, xfrac, cancel}
+% Notação de derivadas
+\RequirePackage[thinc]{esdiff}
+\RequirePackage{commath}
+\RequirePackage{iftex}
+
+% Setinhas para notação de vetor
+\RequirePackage{esvect}
+\RequirePackage{letltxmacro} % Let assignment for LATEX macros
+\let\frac\dfrac % normal font size for \frac
+
+\ifXeTeX
+	%\RequirePackage{upgreek}
+	\iftoggle{slv}
+	{\RequirePackage[bold-style=ISO,mathbf=sym,mathrm=sym]{unicode-math}}
+	{
+	\RequirePackage[bold-style=upright,mathbf=sym,mathrm=sym]{unicode-math}
+}
+	\setmathfont{latinmodern-math.otf}
+	\iftoggle{brm}{
+		\let\sin\relax\DeclareMathOperator{\sin}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font sen}}}
+		\DeclareMathOperator{\sen}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font sen}}}
+		\let\arcsin\relax\DeclareMathOperator{\arcsin}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font arcsen}}}
+		\DeclareMathOperator{\arcsen}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font arcsen}}}
+		\let\tan\relax\DeclareMathOperator{\tan}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font tg}}}
+		\DeclareMathOperator{\tg}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font tg}}}
+		\let\arctan\relax\DeclareMathOperator{\arctan}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font arctg}}}
+		\DeclareMathOperator{\arctg}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font arctg}}}
+		\let\cot\relax\DeclareMathOperator{\cot}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font cotg}}}
+		\DeclareMathOperator{\cotg}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font cotg}}}
+		\let\csc\relax\DeclareMathOperator{\csc}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font cosec}}}
+		\DeclareMathOperator{\cossec}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font cosec}}}
+		\DeclareMathOperator{\cis}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font cis}}}
+	}{
+		\let\sin\relax\DeclareMathOperator{\sin}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font sin}}}
+		\let\sinh\relax\DeclareMathOperator{\sinh}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font sinh}}}
+		\let\cosh\relax\DeclareMathOperator{\cosh}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font cosh}}}
+		\let\tan\relax\DeclareMathOperator{\tan}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font tan}}}
+		\let\tanh\relax\DeclareMathOperator{\tanh}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font tanh}}}
+		\let\cot\relax\DeclareMathOperator{\cot}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font cot}}}
+		\let\coth\relax\DeclareMathOperator{\coth}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font coth}}}
+		\let\sec\relax\DeclareMathOperator{\sec}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font sec}}}
+		\let\csc\relax\DeclareMathOperator{\csc}{\qopname\relax o{\vphantom{\operator@font cos}\smash{\operator@font csc}}}
+	}
+	%\setmathfont[range=up/{Greek,greek}]{CMU Sans Serif}
+	\iftoggle{arr}{}{
+	\let\oldhat\hat
+	% Negrito para notação de vetor
+	\renewcommand{\vec}[1]{\mathbf{#1}}
+	%
+	\renewcommand{\hat}[1]{\vec{\oldhat{#1}}}
+	%
+	\newcommand{\ihat}{\hat{\textbf{\i}}}
+	\newcommand{\jhat}{\hat{\textbf{\j}}}
+	\newcommand{\khat}{\hat{k}}
+	\newcommand{\rhat}{\hat{r}}
+	\newcommand{\that}{\hat{\theta}}
+	\newcommand{\ehat}[1]{\hat{e}_{\vec{#1}}}
+	}
+\else
+	\RequirePackage{bm}
+	\iftoggle{brm}{
+		\let\sin\relax\DeclareMathOperator{\sin}{sen}
+		\DeclareMathOperator{\sen}{sen}
+		\let\arcsin\relax\DeclareMathOperator{\arcsin}{arcsen}
+		\DeclareMathOperator{\arcsen}{arcsen}
+		\let\tan\relax\DeclareMathOperator{\tan}{tg}
+		\DeclareMathOperator{\tg}{tg}
+		\let\arctan\relax\DeclareMathOperator{\arctan}{arctg}
+		\DeclareMathOperator{\arctg}{arctg}
+		\let\cot\relax\DeclareMathOperator{\cot}{cotg}
+		\DeclareMathOperator{\cotg}{cotg}
+		\let\csc\relax\DeclareMathOperator{\csc}{cossec}
+		\DeclareMathOperator{\cossec}{cossec}
+		\DeclareMathOperator{\cis}{cis}
+	}{}
+	% Negrito para notação de vetor
+	\iftoggle{slv}
+	{\renewcommand{\vec}[1]{\bm{#1}}
+	\newcommand{\that}{\hat{\theta}}
+	}
+	{\RequirePackage{upgreek}
+	\renewcommand{\vec}[1]{\bm{\mathrm{#1}}}
+	\newcommand{\that}{\hat{\uptheta}}
+	}
+%	
+	\iftoggle{arr}{}{
+	\let\oldhat\hat
+	\renewcommand{\hat}[1]{\vec{\oldhat{#1}}}
+%	
+	\newcommand{\ihat}{\hat{\imath}}
+	\newcommand{\jhat}{\hat{\jmath}}
+	\newcommand{\khat}{\hat{k}}
+	\newcommand{\rhat}{\hat{r}}
+%	
+	\newcommand{\ehat}[1]{\hat{e}_{\vec{#1}}}
+	}
+\fi
+
+
+\def\<#1>{\langle\ignorespaces#1\unskip\rangle}
+
+\RequirePackage{siunitx}
+
+\sisetup{per-mode=symbol,
+	detect-weight=true,
+	exponent-product = \cdot,
+	math-micro=\text{µ},text-micro=µ,
+	math-ohm=\Omega,
+	text-ohm=\ensuremath{\Omega},}
+
+\iftoggle{eng}{	
+}{\sisetup{
+	range-phrase={\text{ à }},
+	list-pair-separator={\text{ e }},
+	list-separator={; },
+	list-final-separator={\text{ e }},
+	output-decimal-marker={,},}
+}
+
+\DeclareSIUnit{\lightyear}{ly}
+\DeclareSIUnit{\rpm}{rpm}
+
+\RequirePackage{pgfplots, tikz}
+
+\newcommand{\setmyunit}[1]{\tikzset{every picture/.style={x=#1, y=#1}}}
+
+\pgfplotsset{compat=1.5,
+	tick label style={font=\normalsize},
+	label style={font=\normalsize},
+	legend style={font=\normalsize},}
+
+\usepgfplotslibrary{fillbetween}
+
+\usetikzlibrary{backgrounds, positioning, calc,
+	patterns, arrows.meta, arrows, decorations, hobby,
+	decorations.pathmorphing, decorations.markings, decorations.pathreplacing,
+	angles, quotes, intersections}
+
+\def\dotMarkRightAngle[size=#1](#2,#3,#4){%
+	\draw ($(#3)!#1!(#2)$) -- 
+	($($(#3)!#1!(#2)$)!#1!90:(#2)$) --
+	($(#3)!#1!(#4)$);
+	\path (#3) --node[circle,fill,inner sep=.5pt]{} ($($(#3)!#1!(#2)$)!#1!90:(#2)$);
+}
+
+%\usepackage{tkz-euclide} %euclidean geometry
+
+
+\iftoggle{ws}{
+	% define colors
+	\definecolor{redAr}{RGB}{186, 1, 1}
+	\definecolor{greenAr}{RGB}{0, 204, 47}
+%	
+%	
+	%define tikz curvedarrow command
+	\newcommand\curvedarrow{}
+	\def\curvedarrow[#1]#2(#3:#4 #5:#6)% [color,draw options] (initial node:arc length final node:arc length)
+	{\draw[-latex,color=#1] let \p1=($({#3}.north) +(2.7pt, 8pt)$), \p2=($({#5}.north) +(2.7pt, 8pt)$) in (\p1) .. controls ($(\p1)!#4!90:(\p2)$) and ($(\p2)!#6!270:(\p1)$) .. (\p2);}
+%	
+	%define new tikz command for wrapping an arc with curly brace
+	\DeclareFontFamily{U}{tipa}{}
+	\DeclareFontShape{U}{tipa}{m}{n}{<->tipa10}{}
+	\newcommand{\arc@char}{{\usefont{U}{tipa}{m}{n}\symbol{62}}}%
+%	
+	\newcommand{\arc}[1]{\mathpalette\arc@arc{#1}}
+%	
+	\newcommand{\arc@arc}[2]{%
+		\sbox0{$\m@th#1#2$}%
+		\vbox{
+			\hbox{\resizebox{\wd0}{\height}{\arc@char}}
+			\nointerlineskip
+			\box0
+		}%
+	}
+%	
+	\tikzset{curlybrace/.style={rounded corners=2pt,line cap=round}}%  
+	\pgfkeys{%
+		/curlybrace/.cd,%
+		tip angle/.code     =  \def\cb@angle{#1},
+		/curlybrace/.unknown/.code ={\let\searchname=\pgfkeyscurrentname
+			\pgfkeysalso{\searchname/.try=#1,
+				/tikz/\searchname/.retry=#1}}}  
+	\def\curlybrace{\pgfutil@ifnextchar[{\curly@brace}{\curly@brace[]}}%
+	
+	\def\curly@brace[#1]#2#3#4{% 
+		\pgfkeys{/curlybrace/.cd,
+			tip angle = 0.75}% 
+		\pgfqkeys{/curlybrace}{#1}% 
+		\ifnum 1>#4 \def\cbrd{0.05} \else \def\cbrd{0.075} \fi
+		\draw[/curlybrace/.cd,curlybrace,#1]  (#2:#4-\cbrd) -- (#2:#4) arc (#2:{(#2+#3)/2-\cb@angle}:#4) --({(#2+#3)/2}:#4+\cbrd) coordinate (curlybracetipn);
+		\draw[/curlybrace/.cd,curlybrace,#1] ({(#2+#3)/2}:#4+\cbrd) -- ({(#2+#3)/2+\cb@angle}:#4) arc ({(#2+#3)/2+\cb@angle} :#3:#4) --(#3:#4-\cbrd);
+	}
+%
+	\tikzset{
+		ragged border/.style={ decoration={random steps, segment length=1mm, amplitude=0.5mm},
+			decorate,
+		}
+	}
+}{}
+
+\RequirePackage{environ, xargs}
+
+\newcommandx{\startmulti}[2][1=2,2=c]{
+	\begingroup%
+	\pgfmathsetmacro{\amtoskip}{1/#1 - 0.05/#1}%
+	\newcommandx{\nextcol}{\end{minipage}\hfill\begin{minipage}[#2]{\amtoskip\linewidth}}
+	\begin{minipage}[#2]{\amtoskip\linewidth}}
+	
+\NewEnviron{multi}{\vspace{-\parskip}\expandafter\startmulti\BODY\end{minipage}\endgroup}
+
+
+\newcommandx{\correctspacing}[1][1=1]{\vspace{-#1\abovedisplayskip}}
+
+\iftoggle{ext}{	
+	\usetikzlibrary{external}
+%	
+	\newcommand{\tikzmark}[1]{\tikzset{external/export next=false}
+		\tikz[baseline,remember picture] \coordinate (#1) {};}
+%	
+	\ifXeTeX
+		\newcommand{\externalizefigs}{
+			\tikzexternalize[prefix=figures/]
+			\tikzset{external/system call={
+					xelatex \tikzexternalcheckshellescape -halt-on-error -interaction=batchmode -jobname "\image" "\texsource"}
+			}
+		}
+	\fi
+%	
+	% Environx envs allow for externalization
+	\newcommandx{\NewEnvironx}[5][2,3]{%
+		\expandafter\newcommandx\csname start#1\endcsname[#2][#3]{#4}%
+		\NewEnviron{#1}{\csname start#1\expandafter\endcsname\BODY #5}}
+	
+	%define new env for scaling tikzpictures
+	\NewEnvironx{tikzscale}[1][1=1]{
+		\begin{center}\begin{tikzpicture}[scale=#1]}
+		{\end{tikzpicture}
+	\end{center}}
+%	
+	%define new env for tikz overlaying
+	\NewEnvironx{tikzoverlay}[1][1=]{\tikzset{external/export next=false}
+		\begin{tikzpicture}[overlay, remember picture, #1]}{\end{tikzpicture}}
+}{
+%
+	% define tikzmark command
+	\newcommand{\tikzmark}[1]{\tikz[baseline,remember picture] \coordinate (#1) {};}
+	
+	\newenvironment{tikzscale}[1][1]{\begin{center}
+			\begin{tikzpicture}[scale=1]}{\end{tikzpicture}
+	\end{center}}
+%	
+	\newenvironment{tikzoverlay}[1][]{\begin{tikzpicture}[overlay, remember picture, #1]}{\end{tikzpicture}}
+}
+
+
+\iftoggle{ct}{
+	\RequirePackage[american, cuteinductors, betterproportions]{circuitikz}
+	\RequirePackage{ctikz-ly}
+%	
+	%% Push Button
+	\pgfcircdeclarebipole{}{\ctikzvalof{bipoles/pushbutton/height 2}}{pushedbutton}{\ctikzvalof{bipoles/pushbutton/height}}{\ctikzvalof{bipoles/pushbutton/width}}{
+		\pgfsetlinewidth{\pgfkeysvalueof{/tikz/circuitikz/bipoles/thickness}\pgfstartlinewidth}
+		\pgf@circ@res@temp=-\pgfkeysvalueof{/tikz/circuitikz/nodes width}\pgf@circ@Rlen
+		\advance\pgf@circ@res@temp by -2\pgfstartlinewidth
+		\pgfpathmoveto{\pgfpoint{\pgf@circ@res@left}{\pgf@circ@res@temp}}
+		\pgfpathlineto{\pgfpoint{\pgf@circ@res@right}{\pgf@circ@res@temp}}
+		\pgfpathmoveto{\pgfpoint{0}{\pgf@circ@res@temp}}
+		\pgfpathlineto{\pgfpoint{0}{\pgf@circ@res@up}}
+		\pgfusepath{draw}
+%		
+		\pgftransformshift{\pgfpoint{\pgf@circ@res@left}{0pt}}
+		\pgfnode{ocirc}{center}{}{}{\pgfusepath{draw}}
+		\pgftransformshift{\pgfpoint{2\pgf@circ@res@right}{0pt}}
+		\pgfnode{ocirc}{center}{}{}{\pgfusepath{draw}}
+	}
+	\def\pgf@circ@pushedbutton@path#1{\pgf@circ@bipole@path{pushedbutton}{#1}}
+	\compattikzset{pushed button/.style = {\circuitikzbasekey, /tikz/to path=\pgf@circ@pushedbutton@path, l=#1}}
+%	
+	% define the kinky crossings in circuitikz
+	\tikzset{
+		declare function={% in case of CVS which switches the arguments of atan2
+			atan3(\a,\b)=ifthenelse(atan2(0,1)==90, atan2(\a,\b), atan2(\b,\a));},
+		kinky cross radius/.initial=+.125cm,
+		@kinky cross/.initial=+, kinky crosses/.is choice,
+		kinky crosses/left/.style={@kinky cross=-},kinky crosses/right/.style={@kinky cross=+},
+		kinky cross/.style args={(#1)--(#2)}{
+			to path={
+				let \p{@kc@}=($(\tikztotarget)-(\tikztostart)$),
+				\n{@kc@}={atan3(\p{@kc@})+180} in
+				-- ($(intersection of \tikztostart--{\tikztotarget} and #1--#2)!%
+				\pgfkeysvalueof{/tikz/kinky cross radius}!(\tikztostart)$)
+				arc [ radius     =\pgfkeysvalueof{/tikz/kinky cross radius},
+				start angle=\n{@kc@},
+				delta angle=\pgfkeysvalueof{/tikz/@kinky cross}180 ]
+				-- (\tikztotarget)}}}
+%			
+	\iftoggle{ext}{
+		\NewEnvironx{ctikz}[1][1=1]{
+			\begin{center}\begin{circuitikz}[scale=#1]}
+				{\end{circuitikz}
+		\end{center}}
+	}{
+		\newenvironment{ctikz}
+		{\begin{center}\begin{circuitikz}}
+				{\end{circuitikz}\end{center}}
+	}
+	\newcommand{\parallelsum}{\mathbin{\!/\mkern-5mu/\!}}
+}{}
+
+\iftoggle{cen}{
+	\RequirePackage[inline]{enumitem}
+	\setenumerate{itemindent=0.25cm,labelsep=0.1cm}
+%	
+	\newcounter{examplecounter}
+	\pretocmd{\section}{\setcounter{examplecounter}{1}}{}{}
+	\newcommand{\Example}[1][Exemplo]{\medskip\noindent \textbf{#1 \theexamplecounter}\stepcounter{examplecounter}\par\noindent}
+%	
+	\newcounter{questioncounter}
+	\pretocmd{\section}{\setcounter{questioncounter}{1}}{}{}
+	\newcommand{\Question}[1][Q]{\noindent \textbf{#1\thequestioncounter.}\stepcounter{questioncounter}\hspace{5pt}}
+	\newlist{Subquest}{enumerate}{1}
+	\setlist[Subquest]{label=(\alph*), align=Center}
+%	
+	% define Center custom item number alignment
+	\SetLabelAlign{Center}{\hfil#1\hfil}
+	\newlist{RomanList}{enumerate}{1}
+	\setlist[RomanList]{label=(\Roman*), align=Center}
+%	
+	\newlist{romanlistinline}{enumerate*}{1}
+	\setlist[romanlistinline]{label=(\Roman*)}
+%	
+	\newlist{unindent}{enumerate}{1}
+	\setlist[unindent]{wide, labelwidth=!, labelindent=0pt,label=(\arabic*),resume=unindent}
+	\newcommand{\changelabel}[1]{\setlist[unindent]{wide, labelwidth=!, labelindent=0pt,label=#1,resume=unindent}}
+%
+	\RequirePackage{multicol}
+	\newcommandx{\topenum}[2][1=2,2=1]{
+		\pgfmathsetmacro{\maxcount}{int(#1 - 1)}%
+		\pgfmathsetmacro{\amtoskipcol}{0.05*2/#1}%
+		\setlength\columnsep{\amtoskipcol\linewidth}
+		\begin{multicols}{#1}
+			\begin{unindent}[start=#2]
+				\item
+			\end{unindent}
+			\columnbreak
+			\foreach \i in {1,...,\maxcount}{%
+				\begin{unindent}[]
+					\item
+				\end{unindent}
+				\ifnumequal{\i}{\maxcount}{}{\columnbreak}
+			}
+		\end{multicols}}
+	\newcommandx{\fixtopalign}{\strut\vspace*{-\baselineskip}\newline}
+%	
+	\newcommandx{\un}[1][1=]{\begin{unindent}[#1]
+		\item }
+	\newcommandx{\en}{\end{unindent}}
+	\newcommandx{\vst}{\vspace{\stretch{1}}}
+	\newcommandx{\vstst}{\strut\vspace*{\stretch{1}}}
+}{}
+
+\iftoggle{xk}{
+	\RequirePackage{fontenc}
+%	
+	%define tikz xkcd path styling for handdrawn stuff
+	\definecolor{pltblue}{HTML}{1F77B4}
+	
+	\pgfset{
+		/pgf/decoration/randomness/.initial=2,
+		/pgf/decoration/wavelength/.initial=100
+	}
+	\pgfdeclaredecoration{sketch}{init}{
+		\state{init}[width=0pt,next state=draw,persistent precomputation={
+			\pgfmathsetmacro\pgf@lib@dec@sketch@t0
+		}]{}
+		\state{draw}[width=\pgfdecorationsegmentlength,
+		auto corner on length=\pgfdecorationsegmentlength,
+		persistent precomputation={
+			\pgfmathsetmacro\pgf@lib@dec@sketch@t{mod(\pgf@lib@dec@sketch@t+pow(\pgfkeysvalueof{/pgf/decoration/randomness},rand),\pgfkeysvalueof{/pgf/decoration/wavelength})}
+		}]{
+			\pgfmathparse{sin(2*\pgf@lib@dec@sketch@t*pi/\pgfkeysvalueof{/pgf/decoration/wavelength} r)}
+			\pgfpathlineto{\pgfqpoint{\pgfdecorationsegmentlength}{\pgfmathresult\pgfdecorationsegmentamplitude}}
+		}
+		\state{final}{}
+	}
+	\tikzset{xkcd/.style={decorate,decoration={sketch,segment length=0.5pt,amplitude=0.5pt}}}
+%	
+	\pgfmathsetseed{1}
+%	
+	\newfontfamily\xkcdfont[]{Humor Sans}
+%	
+	\NewEnvironx{xkcdenv}[1][1=1]{
+		\begin{center}\xkcdfont\begin{tikzpicture}[every path/.style={xkcd},
+			scale=#1]}
+		{\end{tikzpicture}
+	\end{center}}
+}{}
+
+\iftoggle{py}{
+	\RequirePackage{listings}
+	\setmonofont{Flux}
+	\lstset{language=Python,basicstyle=\ttfamily,tabsize=3}
+}{}
+
+\iftoggle{mat}{
+	\RequirePackage{mmacells}
+	\mmaDefineMathReplacement{>=}{\geqslant}
+	\mmaDefineMathReplacement{Delta}{\Delta}
+	\mmaDefineMathReplacement{mu}{\mu}
+}{}
+
+\iftoggle{ci}{
+	\RequirePackage[font=itshape]{quoting}
+}{}
+
+\define@choicekey{datetime2.sty}{useregional}[\val\DTM@nr]%
+{false,text,numeric,num}[text]%
+{%
+	\ifcase\DTM@nr\relax
+	\renewcommand*{\DTMifcaseregional}[3]{##1}%
+	\or
+	\renewcommand*{\DTMifcaseregional}[3]{##2}%
+	\or
+	\renewcommand*{\DTMifcaseregional}[3]{##3}%
+	\or
+	\renewcommand*{\DTMifcaseregional}[3]{##3}%
+	\fi
+}
+\let\nr\relax
+
+\RequirePackage{nccmath}
+\RequirePackage{xpatch}
+\xpatchcmd{\NCC@ignorepar}{%
+	\abovedisplayskip\abovedisplayshortskip}
+{%
+	\addtolength\abovedisplayskip{-1ex}%
+	\addtolength\belowdisplayskip{-1ex}%
+%	\abovedisplayskip\abovedisplayshortskip%
+%	\belowdisplayskip\belowdisplayshortskip
+}
+{}{}
