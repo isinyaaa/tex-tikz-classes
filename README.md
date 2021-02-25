@@ -4,3 +4,5 @@ Isabella's Maths and Tikz exam and book class templates and the matching package
 
 
 THIS IS NOT A DRM-FREE REPO !!!
+
+PLEASE CONTACT ME IF YOU INTEND TO USE THIS IN A FOR PROFIT APPLICATION.
